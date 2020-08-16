@@ -1,0 +1,35 @@
+{
+  "name": "@focusbe/cli",
+  "version": "1.0.0",
+  "description": "用于开发的命令行工具",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/focusbe/focusbe-cli.git"
+  },
+  "keywords": [
+    "focusbe",
+    "cli"
+  ],
+  "author": "pegzai",
+  "license": "ISC",
+  "bin": {
+    "ztgame": "index.js",
+    "focusbe": "index.js",
+    "fb": "index.js",
+    "focus": "index.js"
+  },
+  "bugs": {
+    "url": "https://github.com/focusbe/focusbe-cli/issues"
+  },
+  "homepage": "https://github.com/focusbe/focusbe-cli#readme",
+  "dependencies": {
+    "ztgame-cli": "^1.1.8"
+  },
+  "devDependencies": {
+    "fs-extra": "^9.0.1"
+  }
+}
