@@ -27,9 +27,8 @@
   },
   "homepage": "https://github.com/focusbe/focusbe-cli#readme",
   "dependencies": {
-    "ztgame-cli": "^1.1.8"
-  },
-  "devDependencies": {
+    "@ztgame/devtool": "^1.0.0",
+    "@ztgame/devtools": "^0.0.7",
     "fs-extra": "^9.0.1"
   }
 }
