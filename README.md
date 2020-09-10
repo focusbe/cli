@@ -3,7 +3,7 @@
 ## 安装
 
 ```bash
-npm install -g @focusbe/cli
+npm install @focusbe/cli -g
 ```
 
 ## 使用
