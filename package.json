@@ -1,6 +1,6 @@
 {
   "name": "@focusbe/cli",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "用于开发的命令行工具",
   "main": "index.js",
   "scripts": {
@@ -29,6 +29,7 @@
   "dependencies": {
     "@ztgame/devtool": "^1.0.0",
     "@ztgame/devtools": "^0.0.7",
+    "commander": "^6.1.0",
     "fs-extra": "^9.0.1"
   }
 }
