@@ -30,6 +30,8 @@
     "@ztgame/devtool": "^1.0.0",
     "@ztgame/devtools": "^0.0.7",
     "commander": "^6.1.0",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.0.1",
+    "gulp": "^4.0.2",
+    "rollup": "^2.33.1"
   }
 }
