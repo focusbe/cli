@@ -73,7 +73,6 @@ class Build {
         plugins: [typescript()],
         output: outputOptions,
       });
-      console.log(watcher.on);
       watcher.on("event", (event) => {
         if (event.code == "END") {
           this.bs.reload("./js/main.js");
