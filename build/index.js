@@ -1,7 +1,19 @@
 const rollup = require("rollup");
 const path = require("path");
+const commonjs = require("@rollup/plugin-commonjs");
+const resolve  = require("@rollup/plugin-node-resolve").default;
+try {
+  require("@babel/preset-env");
+} catch (error) {
+  return;
+}
+try {
+  require("@babel/core");
+} catch (error) {
+  return;
+}
+
 const babel = require("@rollup/plugin-babel");
-const getBabelOutputPlugin = babel.getBabelOutputPlugin;
 
 const fse = require("fs-extra");
 const stylus = require("stylus");
@@ -70,10 +82,13 @@ class Build {
     try {
       var outputOptions = {
         file: this.outputJs,
+        format: "iife",
       };
       const watcher = rollup.watch({
         input: this.inputJs,
         plugins: [
+          commonjs(),
+          resolve(),
           babel.babel({
             exclude: /(node_modules|babel|corejs|core-js)/, //千万不要babel babel的代码
             babelHelpers: "bundled",
@@ -81,23 +96,20 @@ class Build {
               [
                 "@babel/preset-env",
                 {
+                  useBuiltIns: "usage",
+                  corejs: 3,
                   targets: {
-                    browsers: "last 3 version ,ie >= 8",
+                    browsers: "last 4 version ,ie >= 8",
                   },
                 },
               ],
             ],
-            // plugins: [
-            //   [
-            //     "@babel/plugin-transform-runtime",
-            //     {
-            //       corejs: 3,
-            //       regenerator: true,
-            //     },
-            //   ],
-            // ],
           }),
         ],
+        // external: function (filename, pluginFile) {
+        //   // console.log(filename, pluginFile);
+        //   return false;
+        // },
         output: outputOptions,
       });
       watcher.on("event", (event) => {
