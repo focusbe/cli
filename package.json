@@ -1,6 +1,6 @@
 {
   "name": "@focusbe/cli",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "用于开发的命令行工具",
   "main": "index.js",
   "scripts": {
@@ -37,6 +37,7 @@
     "browser-sync": "^2.26.13",
     "chokidar": "^3.4.3",
     "commander": "^6.1.0",
+    "core-js": "^3.7.0",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "poststylus": "^1.0.1",
