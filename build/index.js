@@ -1,7 +1,7 @@
 const rollup = require("rollup");
 const path = require("path");
 const commonjs = require("@rollup/plugin-commonjs");
-const resolve  = require("@rollup/plugin-node-resolve").default;
+const resolve = require("@rollup/plugin-node-resolve").default;
 try {
   require("@babel/preset-env");
 } catch (error) {
@@ -24,7 +24,13 @@ class Build {
   constructor(basePath, isDev = true) {
     this.isDev = isDev;
     this.basePath = basePath;
-    this.inputJs = path.resolve(this.basePath, "./scripts/main.js");
+    let scriptDir = path.resolve(this.basePath, "./scripts");
+    if (fse.existsSync(scriptDir)) {
+      this.inputJs = path.resolve(this.basePath, "./scripts/main.js");
+    } else {
+      this.inputJs = path.resolve(this.basePath, "./js/main.js");
+    }
+
     this.outputJs = this.inputJs.replace("main.js", "bundle.js");
     this.inputCss = path.resolve(this.basePath, "./css/main.styl");
     this.outputCss = this.inputCss.replace(".styl", ".css");
