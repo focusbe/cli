@@ -70,19 +70,23 @@ class Build {
       });
   }
   postcss() {
-    fse.readFile(this.inputCss, (err, css) => {
-      var st = stylus(css.toString());
-      st.set("filename", this.inputCss)
-        .use(poststylus(["autoprefixer"]))
-        .render((err, css) => {
-          if (err) throw err;
-          fse.writeFile(this.outputCss, css, (err) => {
-            if (!err && this.bs) {
-              this.bs.reload("./css/main.css");
-            }
+    try {
+      fse.readFile(this.inputCss, (err, css) => {
+        var st = stylus(css.toString());
+        st.set("filename", this.inputCss)
+          .use(poststylus(["autoprefixer"]))
+          .render((err, css) => {
+            if (err) throw err;
+            fse.writeFile(this.outputCss, css, (err) => {
+              if (!err && this.bs) {
+                this.bs.reload("./css/main.css");
+              }
+            });
           });
-        });
-    });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
   async buildjs() {
     try {
