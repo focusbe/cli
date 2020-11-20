@@ -101,7 +101,7 @@ class Build {
           commonjs(),
           resolve(),
           babel.babel({
-            exclude: /(node_modules|babel|corejs|core-js)/, //千万不要babel babel的代码
+            exclude: /(babel|corejs|core-js)/, //千万不要babel babel的代码
             babelHelpers: "bundled",
             presets: [
               [
@@ -110,7 +110,7 @@ class Build {
                   useBuiltIns: "usage",
                   corejs: 3,
                   targets: {
-                    browsers: "last 4 version ,ie >= 8",
+                    browsers: "ie >= 8",
                   },
                 },
               ],
