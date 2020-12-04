@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const commander = require("commander");
-const DevTools = require("@ztgame/devtools");
-var devTools = new DevTools();
+// const DevTools = require("@ztgame/devtools");
+// var devTools = new DevTools();
 const Build = require("./build");
 //
 var projectRoot = process.cwd();
