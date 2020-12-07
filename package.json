@@ -14,13 +14,11 @@
     "focusbe",
     "cli"
   ],
-  "author": "pegzai",
+  "author": "pengzai",
   "license": "ISC",
   "bin": {
-    "ztgame": "index.js",
     "focusbe": "index.js",
-    "fb": "index.js",
-    "focus": "index.js"
+    "fcb": "index.js"
   },
   "bugs": {
     "url": "https://github.com/focusbe/focusbe-cli/issues"
