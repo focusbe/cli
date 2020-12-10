@@ -14,14 +14,19 @@ try {
 }
 
 const babel = require("@rollup/plugin-babel");
-
 const fse = require("fs-extra");
 const stylus = require("stylus");
 const poststylus = require("poststylus");
 const browserSync = require("browser-sync");
 const chokidar = require("chokidar");
 class Build {
-  constructor(basePath, isDev = true) {
+  constructor(options) {
+    var defaultOps = {
+      isdev:false,
+      basePth:'',
+      css:null,
+      js:null
+    };
     this.isDev = isDev;
     this.basePath = basePath;
     let scriptDir = path.resolve(this.basePath, "./scripts");
@@ -36,12 +41,9 @@ class Build {
     this.outputCss = this.inputCss.replace(".styl", ".css");
   }
   start() {
-    //
-    //
     if (this.isDev) {
       this.server();
     }
-
     this.buildcss();
     this.buildjs();
   }
@@ -71,7 +73,6 @@ class Build {
   }
   postcss() {
     fse.readFile(this.inputCss, (err, css) => {
-      
       var st = stylus(css.toString());
       st.set("filename", this.inputCss)
         .use(poststylus(["autoprefixer"]))
