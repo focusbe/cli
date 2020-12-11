@@ -1,11 +1,19 @@
 const Script = require("../modules/build/script");
 Script({
   watch: true,
-  input: ["./demos/js/main.js","./demos/js/b.js"],
+  basePath: "demos",
+  publicPath: "",
+  input: "**/*.js",
+  chainRollup: [],
+  css: {
+
+  },
   output: {
-    dir:"./demos/dist/",
+    dir: "dist",
     format: "cjs",
-    banner:'/**packaged by focusbe cli**/',
-    compact:true
+    assetsDir:'static'
+  },
+  on(event) {
+    console.log(event);
   },
 });
