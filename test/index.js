@@ -1,17 +1,12 @@
 const Script = require("../modules/build/script");
-Script({
+new Script({
   watch: true,
   basePath: "demos",
   publicPath: "",
   input: "**/*.js",
-  chainRollup: [],
-  css: {
-
-  },
   output: {
-    dir: "dist",
-    format: "cjs",
-    assetsDir:'static'
+    base:'dist',
+    js:'js'
   },
   on(event) {
     console.log(event);
