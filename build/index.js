@@ -12,9 +12,9 @@ try {
 } catch (error) {
   return;
 }
+const Config = require("./config");
 
 const babel = require("@rollup/plugin-babel");
-
 const fse = require("fs-extra");
 const stylus = require("stylus");
 const poststylus = require("poststylus");
@@ -22,28 +22,38 @@ const browserSync = require("browser-sync");
 const chokidar = require("chokidar");
 class Build {
   constructor(basePath, isDev = true) {
-    this.isDev = isDev;
     this.basePath = basePath;
-    let scriptDir = path.resolve(this.basePath, "./scripts");
-    if (fse.existsSync(scriptDir)) {
-      this.inputJs = path.resolve(this.basePath, "./scripts/main.js");
-    } else {
-      this.inputJs = path.resolve(this.basePath, "./js/main.js");
-    }
-
-    this.outputJs = this.inputJs.replace("main.js", "bundle.js");
-    this.inputCss = path.resolve(this.basePath, "./css/main.styl");
-    this.outputCss = this.inputCss.replace(".styl", ".css");
+    
+    this.isDev = isDev;
   }
-  start() {
-    //
-    //
-    if (this.isDev) {
-      this.server();
+  async start() {
+    try {
+      var customConfig = await Config.get() || {};
+      var _defaultConfig = {
+        js: [
+          {
+            input: "./js/main.js",
+            output: "./js/bundle.js",
+          },
+        ],
+        css: [
+          {
+            input: "./css/main.styl",
+            output: "./css/main.css",
+          },
+        ],
+      };
+      customConfig = Object.assign(_defaultConfig, customConfig);
+      this.Config = customConfig;
+      if (this.isDev) {
+        this.server();
+      }
+      this.buildcss();
+      this.buildjs();
+    } catch (error) {
+      console.log(error);
     }
-
-    this.buildcss();
-    this.buildjs();
+    
   }
   server() {
     this.bs = browserSync({ server: this.basePath });
@@ -63,74 +73,96 @@ class Build {
         ignoreInitial: true,
       })
       .on("all", (event, file) => {
-        if (path.resolve(this.basePath, file) == this.outputCss) {
-          return;
+        let fullpath = path.resolve(this.basePath, file);
+        for (var i in this.Config.css) {
+          if (fullpath == path.resolve(this.basePath, this.Config.css[i])) {
+            return;
+          }
         }
         this.postcss();
       });
   }
   postcss() {
-    fse.readFile(this.inputCss, (err, css) => {
-      
-      var st = stylus(css.toString());
-      st.set("filename", this.inputCss)
-        .use(poststylus(["autoprefixer"]))
-        .render((err, css) => {
-          if (err){
-            delete err.input;
-            console.error(err);
-            return;
-          };
-          fse.writeFile(this.outputCss, css, (err) => {
-            if (!err && this.bs) {
-              this.bs.reload("./css/main.css");
+    this.Config.css.map(async (item) => {
+      let input = path.resolve(this.basePath, item.input);
+      if (!(await fse.pathExists(input))) {
+        console.log("文件" + item.input + "不存在");
+        return true;
+      }
+      let output = path.resolve(this.basePath, item.output);
+      fse.readFile(input, (err, css) => {
+        var st = stylus(css.toString());
+        st.set("filename", item.input)
+          .use(poststylus(["autoprefixer"]))
+          .render((err, css) => {
+            if (err) {
+              delete err.input;
+              console.error(err);
+              return;
             }
+            fse.writeFile(output, css, (err) => {
+              if (!err && this.bs) {
+                this.bs.reload(item.input);
+              }
+            });
           });
-        });
+      });
     });
+  }
+  getFullPath(file) {
+    return path.resolve(this.basePath, file);
+  }
+  getRelPath() {
+    return path.relative(this.basePath, file);
   }
   async buildjs() {
     try {
-      var outputOptions = {
-        file: this.outputJs,
-        format: "iife",
-      };
-      const watcher = rollup.watch({
-        input: this.inputJs,
-        plugins: [
-          commonjs(),
-          resolve(),
-          babel.babel({
-            exclude: /(node_modules|babel|corejs|core-js)/, //千万不要babel babel的代码
-            babelHelpers: "bundled",
-            presets: [
-              [
-                "@babel/preset-env",
-                {
-                  useBuiltIns: "usage",
-                  corejs: 3,
-                  targets: {
-                    browsers: "last 4 version ,ie >= 8",
+      this.Config.js.map(async (item) => {
+        let input = this.getFullPath(item.input);
+        if (!(await fse.pathExists(input))) {
+          console.log("文件" + item.input + "不存在");
+          return;
+        }
+        let output = this.getFullPath(item.output);
+        var outputOptions = {
+          file: output,
+          format: "iife",
+        };
+        var rollupConfig = {
+          input: input,
+          plugins: [
+            commonjs(),
+            resolve(),
+            babel.babel({
+              exclude: /(node_modules|babel|corejs|core-js)/, //千万不要babel babel的代码
+              babelHelpers: "bundled",
+              presets: [
+                [
+                  "@babel/preset-env",
+                  {
+                    useBuiltIns: "usage",
+                    corejs: 3,
+                    targets: {
+                      browsers: "last 4 version ,ie >= 8",
+                    },
                   },
-                },
+                ],
               ],
-            ],
-          }),
-        ],
-        // external: function (filename, pluginFile) {
-        //   // console.log(filename, pluginFile);
-        //   return false;
-        // },
-        output: outputOptions,
+            }),
+          ],
+          output: outputOptions,
+        };
+        const watcher = rollup.watch(rollupConfig);
+        watcher.on("event", (event) => {
+          if (event.code.indexOf("ERROR") > -1) {
+            console.log(event);
+          }
+          if (event.code == "END" && this.bs) {
+            this.bs.reload(item.output);
+          }
+        });
       });
-      watcher.on("event", (event) => {
-        if (event.code.indexOf("ERROR") > -1) {
-          console.log(event);
-        }
-        if (event.code == "END" && this.bs) {
-          this.bs.reload("./js/bundle.js");
-        }
-      });
+
       return true;
     } catch (err) {
       console.error("构建文件失败");
