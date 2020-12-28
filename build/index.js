@@ -74,8 +74,9 @@ class Build {
       })
       .on("all", (event, file) => {
         let fullpath = path.resolve(this.basePath, file);
+
         for (var i in this.Config.css) {
-          if (fullpath == path.resolve(this.basePath, this.Config.css[i])) {
+          if (fullpath == path.resolve(this.basePath, this.Config.css[i].output)) {
             return;
           }
         }
@@ -85,6 +86,7 @@ class Build {
   postcss() {
     this.Config.css.map(async (item) => {
       let input = path.resolve(this.basePath, item.input);
+      console.log(input);
       if (!(await fse.pathExists(input))) {
         console.log("文件" + item.input + "不存在");
         return true;
