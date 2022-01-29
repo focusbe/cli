@@ -136,7 +136,7 @@ class Build {
             commonjs(),
             resolve(),
             babel.babel({
-              exclude: /(babel|corejs|core-js)/, //千万不要babel babel的代码
+              exclude: /(.*)(babel|corejs|core-js)/, //千万不要babel babel的代码
               babelHelpers: "bundled",
               presets: [
                 [
