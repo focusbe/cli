@@ -1,6 +1,10 @@
 {
+    "name": "focusbe-app",
     "dependencies": {
       "@babel/preset-env": "^7.22.9",
       "@focusbe/cli": "^1"
+    },
+    "scripts": {
+        "dev":"focusbe dev"
     }
 }
